@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        #ordersTable {
+            width: 100%;
+            margin: 20px 0;
+            border-collapse: collapse;
+        }
+        #ordersTable th, #ordersTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        #ordersTable th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <table id="ordersTable">
+        <tr>
+            <th>Order Item</th>
+            <th>Table Number</th>
+            <th>Action</th>
+        </tr>
+        <!-- Orders will be inserted here -->
+    </table>
+
+    <script>
+     const firebaseConfig = {
+    apiKey: "AIzaSyAYnpNTBLZCGzbbwddDpNApMDomptOPpwg",
+    authDomain: "restaurant-booking-2d26c.firebaseapp.com",
+    projectId: "restaurant-booking-2d26c",
+    storageBucket: "restaurant-booking-2d26c.appspot.com",
+    messagingSenderId: "305396188755",
+    appId: "1:305396188755:web:b6458990fff6640c7028a6",
+    measurementId: "G-VD9Q7K1SX1"
+  };
+
+        firebase.initializeApp(firebaseConfig);
+
+
+
+
+
+        var ordersTable = document.getElementById('ordersTable');
+
+firebase.database().ref('orders').on('value', function(snapshot) {
+    ordersTable.innerHTML = '<tr><th>Order</th><th>Table Number</th><th>Action</th></tr>'; 
+    snapshot.forEach(function(childSnapshot) {
+        var tableNumber = childSnapshot.val().tableNumber;
+        var order = childSnapshot.val().order; // Get the order from the snapshot
+        var row = ordersTable.insertRow(-1);
+        var cell1 = row.insertCell(0);
+        var cell2 = row.insertCell(1);
+        var cell3 = row.insertCell(2);
+
+        // Check if order is an array before iterating over it
+        if (Array.isArray(order)) {
+            var orderItems = [];
+            order.forEach(function(item) {
+                orderItems.push(item.name); // Extract the name property of each item
+            });
+            cell1.textContent = orderItems.join(', '); // Display the order names as a comma-separated list
+        } else {
+            cell1.textContent = order; // If order is not an array, display it directly
+        }
+
+        cell2.textContent = tableNumber; 
+        var btn = document.createElement('button');
+        btn.textContent = 'Done';
+        btn.onclick = function() {
+            firebase.database().ref('orders/' + childSnapshot.key).remove();
+        };
+        cell3.appendChild(btn);
+    });
+});
+</script>
+
+    </script>
+</body>
+</html>

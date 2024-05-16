@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    <style>
+      .big-button {
+    font-size: 1.5em;
+    padding: 10px 20px;
+    background-color: #008000; 
+    border-color: #008000;  
+}
+  </style>
+</head>
+<body>
+    
+
+    <div class="container mt-5">
+        <div class="modal" tabindex="-1" role="dialog" id="errorModal">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title">Error</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p id="errorMessage"></p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        <h1 class="text-center">Admin Login</h1>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary mx-auto d-block big-button">Login</button>
+        </form>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+    apiKey: "AIzaSyAYnpNTBLZCGzbbwddDpNApMDomptOPpwg",
+    authDomain: "restaurant-booking-2d26c.firebaseapp.com",
+    projectId: "restaurant-booking-2d26c",
+    storageBucket: "restaurant-booking-2d26c.appspot.com",
+    messagingSenderId: "305396188755",
+    appId: "1:305396188755:web:b6458990fff6640c7028a6",
+    measurementId: "G-VD9Q7K1SX1"
+  };
+
+        firebase.initializeApp(firebaseConfig);
+
+        var loginForm = document.getElementById('login-form');
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var email = document.getElementById('email').value;
+            var password = document.getElementById('password').value;
+
+            firebase.auth().signInWithEmailAndPassword(email, password)
+    .then(function() {
+
+        window.location.href = 'admin.html';
+    })
+    .catch(function(error) {
+
+    var errorCode = error.code;
+    var errorMessage;
+    if (errorCode === 'auth/wrong-password' || errorCode === 'auth/user-not-found') {
+        errorMessage = 'Wrong password or email';
+    } else {
+    console.log(error.message);
+        errorMessage = 'Wrong password/email';
+    }
+
+
+    document.getElementById('errorMessage').textContent = errorMessage;
+
+
+    $('#errorModal').modal('show');
+});
+        });
+    </script>
+</body>
+</html>

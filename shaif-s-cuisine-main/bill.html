@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bill</title>
+
+
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    #orderContainer {
+      padding: 20px;
+      background-color: white;
+      border-radius: 5px;
+      box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+      width: 300px;
+    }
+    #orderList {
+      margin-bottom: 20px;
+    }
+    #totalAmount {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    #tableNumber {
+      margin-bottom: 20px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    #payButton {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background-color: green;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="mainContainer">
+    <div id="orderContainer">
+      <h2>Your Order</h2>
+      <div id="orderList"></div>
+      <div id="totalAmount"></div>
+      <label for="tableNumber">Table Number:</label>
+      <input type="number" id="tableNumber">
+      <button id="payButton" onclick="handlePayment()">Pay</button>
+    </div>
+    
+    <img src="images/qr.webp" alt="Logo" style="display: block; margin: auto; width: 10%;">
+  </div>
+</body>
+
+
+  <script>
+    const firebaseConfig = {
+    apiKey: "AIzaSyAYnpNTBLZCGzbbwddDpNApMDomptOPpwg",
+    authDomain: "restaurant-booking-2d26c.firebaseapp.com",
+    projectId: "restaurant-booking-2d26c",
+    storageBucket: "restaurant-booking-2d26c.appspot.com",
+    messagingSenderId: "305396188755",
+    appId: "1:305396188755:web:b6458990fff6640c7028a6",
+    measurementId: "G-VD9Q7K1SX1"
+  };
+console.log("1");
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  console.log("2");
+
+
+
+
+
+let order = JSON.parse(localStorage.getItem('order')) || [];
+var tablenumber = document.getElementById('tableNumber').value;
+
+let orderList = document.getElementById('orderList');
+order.forEach(dish => {
+  let dishElement = document.createElement('p');
+  dishElement.textContent = `Name: ${dish.name}, Price: ${dish.price}`;
+  orderList.appendChild(dishElement);
+});
+
+
+let totalAmount = order.reduce((total, dish) => total + dish.price, 0);
+
+
+let totalAmountElement = document.getElementById('totalAmount');
+totalAmountElement.textContent = `Total Amount: ${totalAmount}`;
+
+
+
+function handlePayment() {
+  let tableNumber = document.getElementById('tableNumber').value;
+
+  if (!tableNumber) {
+    alert('Please enter a table number');
+    return;
+  }
+
+  // Get the order from local storage
+  let order = JSON.parse(localStorage.getItem('order')) || [];
+
+  // Create a new object that includes both the order and tableNumber
+  let orderWithTableNumber = {
+    order: order,
+    tableNumber: tableNumber
+  };
+
+  // Generate a new unique key for the order
+  var newOrderKey = firebase.database().ref().child('orders').push().key;
+
+  // Push the new object to Firebase
+  firebase.database().ref('orders/' + newOrderKey).set(orderWithTableNumber)
+    .then(() => {
+      alert('Payment successful');
+      localStorage.removeItem('order');
+      location.reload();
+    });
+}
+  </script>
+</body>
+</html>

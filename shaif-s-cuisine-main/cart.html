@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Cart</title>
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 50px;
+      font-family: Arial, sans-serif;
+    }
+
+    .cart-page {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .cart-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .cart-table th,
+    .cart-table td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .cart-table th {
+      background-color: #ffffff;
+      font-weight: normal;
+    }
+
+    .cart-table td:last-child {
+      text-align: right;
+    }
+
+    .total-price {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+
+    .update-cart-btn {
+      padding: 10px 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+    }
+
+    .update-cart-btn:hover {
+      background-color: #45a049;
+    }
+
+    .remove-btn {
+  padding: 10px 20px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+}
+
+.remove-btn:hover {
+  background-color: rgb(197, 0, 0);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cart-page">
+      <h1>My Cart</h1>
+      <table class="cart-table">
+        <thead>
+          <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="cart-items">
+        </tbody>
+      </table>
+      <button class="update-cart-btn" id="update-cart-btn">Payment</button>
+      <div class="total-price">
+        Total Price: <span id="total-price">0</span>
+      </div>
+    </div>
+  </div>
+  <script>
+
+let cart = JSON.parse(localStorage.getItem('order')) || [];
+
+
+const printOrderContent = () => {
+  const order = JSON.parse(localStorage.getItem('order')) || [];
+  
+  order.forEach((item) => {
+    console.log(`Product Name: ${item.name}, Price: ${item.price}`);
+  });
+};
+
+printOrderContent();
+
+
+
+
+
+
+
+const addProductToCart = (productName, price, quantity) => {
+  const cart = JSON.parse(localStorage.getItem('order')) || [];
+
+  const item = {
+    productName,
+    price,
+    quantity
+  };
+
+  order.push(item);
+  localStorage.setItem('cart', JSON.stringify(cart));
+  renderCart();
+};
+
+
+const renderCart = () => {
+  const cart = JSON.parse(localStorage.getItem('order')) || [];
+  const cartItems = document.getElementById('cart-items');
+  cartItems.innerHTML = '';
+  let totalPrice = 0;
+
+  cart.forEach((item, index) => {
+    let row = document.createElement('tr');
+
+    let nameCell = document.createElement('td');
+    let priceCell = document.createElement('td');
+    let quantityCell = document.createElement('td');
+   // let subtotalCell = document.createElement('td');
+    let actionCell = document.createElement('td');
+
+    nameCell.textContent = `${item.name}`;
+    priceCell.textContent = `$${item.price}`;
+    quantityCell.textContent = '1';
+    //subtotalCell.textContent = `$${item.price}`;
+
+    let removeBtn = document.createElement('button');
+removeBtn.textContent = 'Remove';
+removeBtn.className = 'remove-btn';
+
+removeBtn.addEventListener('click', () => {
+  cart.splice(index, 1);
+  localStorage.setItem('order', JSON.stringify(cart));
+  row.remove(); // This line removes the row from the table
+  renderCart();
+});
+
+    actionCell.appendChild(removeBtn);
+
+    row.appendChild(nameCell);
+    row.appendChild(priceCell);
+    row.appendChild(actionCell);
+
+    cartItems.appendChild(row);
+
+    totalPrice += item.price;
+  });
+
+  document.getElementById('total-price').textContent = `$${totalPrice}`;
+  console.log(totalPrice);
+localStorage.setItem('price',totalPrice);
+console.log(localStorage.getItem('price'));
+};
+
+document.getElementById('update-cart-btn').addEventListener('click', function() {
+    window.location.href = 'bill.html';
+});
+
+
+window.onload = renderCart;
+  </script>
+</body>
+</html>

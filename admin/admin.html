@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Page</title>
+    <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body>
+    <button onclick="location.href='review.html'" class="btn btn-primary" style="position: absolute; top: 10px; right: 10px; padding: 10px 20px; border-radius: 5px;">Reviews</button>
+    <div class="container mt-5">
+        <h1 class="text-center">New Bookings</h1>
+        <table class="table table-striped" id="bookings">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Guest Count</th>
+                    <th>Placement</th>
+                    <th>Table Type</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+    apiKey: "AIzaSyAYnpNTBLZCGzbbwddDpNApMDomptOPpwg",
+    authDomain: "restaurant-booking-2d26c.firebaseapp.com",
+    projectId: "restaurant-booking-2d26c",
+    storageBucket: "restaurant-booking-2d26c.appspot.com",
+    messagingSenderId: "305396188755",
+    appId: "1:305396188755:web:b6458990fff6640c7028a6",
+    measurementId: "G-VD9Q7K1SX1"
+  };
+        firebase.initializeApp(firebaseConfig);
+
+        var dbRef = firebase.database().ref('bookings');
+
+        dbRef.on('child_added', function(snapshot) {
+    var booking = snapshot.val();
+
+    var row = document.createElement('tr');
+
+    var nameCell = document.createElement('td');
+    var email = document.createElement('td');
+    var guestCount = document.createElement('td');
+    var placement = document.createElement('td');
+    var tableType = document.createElement('td');
+    var dateCell = document.createElement('td');
+    var timeCell = document.createElement('td');
+    var note = document.createElement('td');
+
+    nameCell.textContent = booking.firstName + ' ' + booking.lastName;
+    email.textContent = booking.email;
+    guestCount.textContent = booking.guestNumber;
+    placement.textContent = booking.placement;
+    tableType.textContent = booking.tableType;
+    dateCell.textContent = booking.date;
+    timeCell.textContent = booking.time;
+    note.textContent = booking.note;
+    console.log(note);
+
+
+    row.appendChild(nameCell);
+    row.appendChild(email);
+    row.appendChild(guestCount);
+    row.appendChild(placement);
+    row.appendChild(tableType);
+    row.appendChild(dateCell);
+    row.appendChild(timeCell);
+    row.appendChild(note);
+
+    var table = document.getElementById('bookings').getElementsByTagName('tbody')[0];
+    table.appendChild(row);
+
+    alert('New booking');
+});
+
+
+//login
+/*
+firebase.auth().onAuthStateChanged(function(user) {
+    if (!user) {
+        window.location.href = 'login.html';
+    }
+}); */
+    </script>
+</body>
+</html>
